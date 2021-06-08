@@ -1,13 +1,11 @@
 #importação das bibliotecas
-import time
 import random
-import math
 import pandas as pd
-import numpy as np
 from data.Data import Data
 from indicators.Indicators import Indicators
 from enviroment.Env_trader import Env_trader
 from rules.Rules import Rules
+from plots.Plots import Plots
 
 #¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨
 #Serão constantes
@@ -21,7 +19,7 @@ end_time = '17:00'                                 #horário limite de operaçã
 time_frame = 1                                     #tempo gráfico em min
 stop = -200                                        #limite de perda por operação
 gain = 200                                         #algo de ganho por operação
-nun_days = 950                                   #numero de candles
+nun_days = 910                                   #numero de candles
 batch_size = 1                                     #divisao em blocos
 #¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨
 #instanciar dados
@@ -46,7 +44,8 @@ resultados = pd.DataFrame(columns=['mean-short-type','mean-short-period','mean-s
 #¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨
 #Indicadores
 maior = 0
-mode_ =0
+mode_ = 0
+result_ = 0
 for j in range(1000):
     #Exploração aleatória
     stop = random.randrange(-150,-600,-5)                                    
@@ -110,6 +109,7 @@ for j in range(1000):
     if ganho > maior:
         maior = ganho
         mode_ = mode
+        result_ = result
     print(j,'ganho final:',ganho,'mode: ',mode,' maior: ',maior,'mode:',mode_)
     #-----------------------------------------------
     resultados = resultados.append({'mean-short-type': tipoc,
@@ -139,3 +139,9 @@ for j in range(1000):
                                     'gain':gain,
                                     'qtd-operations':len(result.ganhofinal),
                                     'profit':sum(result.ganhofinal)}, ignore_index=True)
+
+#¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨
+# Plotar gráficos
+plotar = Plots()
+plotar.candlestick(base.Hora, base.open, base.high, base.low, base.close,result_)
+bas,period_bands,column_band = indicators.bands(26,2,3)

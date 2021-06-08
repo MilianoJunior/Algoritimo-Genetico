@@ -37,6 +37,7 @@ class Indicators():
         self.data = self.data.drop(remove_cols, axis=1)
         return self.data,period_short,period_long,period_signal,columns
     def bands(self,trend_periods=20, deviation=2, column=int):
+        print('column: ',column)
         columns = self.regras_bands[0]['valor_usado'][column]
         self.data['bol_bands_middle'] = self.data[columns].ewm(ignore_na=False, min_periods=0, com=trend_periods, adjust=True).mean()
         for index, row in self.data.iterrows():
